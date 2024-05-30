@@ -11,7 +11,6 @@ def pdf_to_text(pdf_path, txt_path):
     with open(txt_path, 'w', encoding='utf-8') as txt_file:
         txt_file.write(all_text)
 
-# This section can be used to test the function locally
 if __name__ == "__main__":
     import sys
     if len(sys.argv) != 3:
