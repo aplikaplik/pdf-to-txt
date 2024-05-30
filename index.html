@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF to Text Converter</title>
+</head>
+<body>
+    <h1>Upload PDF to Convert to Text</h1>
+    <input type="file" id="fileInput" accept="application/pdf">
+    <button onclick="convertPdfToText()">Convert</button>
+    <a id="downloadLink" style="display:none;">Download Text</a>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.16.0/pdf-lib.min.js"></script>
+    <script>
+        async function convertPdfToText() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert("Please upload a PDF file.");
+                return;
+            }
+
+            const arrayBuffer = await file.arrayBuffer();
+            const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+            const numPages = pdfDoc.getPageCount();
+
+            let extractedText = '';
+            for (let i = 0; i < numPages; i++) {
+                const page = pdfDoc.getPage(i);
+                const text = await page.getTextContent();
+                extractedText += text.items.map(item => item.str).join(' ') + '\n';
+            }
+
+            const blob = new Blob([extractedText], { type: 'text/plain' });
+            const link = document.getElementById('downloadLink');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'output.txt';
+            link.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
