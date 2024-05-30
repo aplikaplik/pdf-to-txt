@@ -42,4 +42,4 @@ jobs:
 
     - name: Remove uploaded PDF file
       run: |
-        rm $GITHUB_WORKSPACE/${{ github.event.inputs.pdf_path }}
+        if [ -f $GITHUB_WORKSPACE/${{ github.event.inputs.pdf_path }} ]; then rm $GITHUB_WORKSPACE/${{ github.event.inputs.pdf_path }}; else echo "File does not exist: $GITHUB_WORKSPACE/${{ github.event.inputs.pdf_path }}"; fi
