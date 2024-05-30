@@ -30,3 +30,9 @@ jobs:
     - name: Convert PDF to Text
       run: |
         python pdf_to_text.py ${{ github.event.inputs.pdf_path }} ${{ github.event.inputs.txt_path }}
+
+    - name: Upload text file
+      uses: actions/upload-artifact@v2
+      with:
+        name: converted-text
+        path: ${{ github.event.inputs.txt_path }}
