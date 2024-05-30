@@ -27,12 +27,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install pdfplumber
 
-    - name: Create directories
-      run: mkdir -p path/to/uploaded
-
     - name: Convert PDF to Text
       run: |
-        echo "${{ github.event.inputs.pdf_path }}" > pdf_file_path.txt
         python pdf_to_text.py ${{ github.event.inputs.pdf_path }} ${{ github.event.inputs.txt_path }}
 
     - name: Upload text file
