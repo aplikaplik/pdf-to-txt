@@ -7,12 +7,12 @@
 <body>
     <h1>Upload PDF to Convert to Text</h1>
     <input type="file" id="fileInput" accept="application/pdf">
-    <button onclick="convertPdfToText()">Convert</button>
+    <button onclick="uploadAndConvert()">Convert</button>
+    <p id="status"></p>
     <a id="downloadLink" style="display:none;">Download Text</a>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.16.0/pdf-lib.min.js"></script>
     <script>
-        async function convertPdfToText() {
+        async function uploadAndConvert() {
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
             if (!file) {
@@ -20,22 +20,39 @@
                 return;
             }
 
-            const arrayBuffer = await file.arrayBuffer();
-            const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-            const numPages = pdfDoc.getPageCount();
+            const formData = new FormData();
+            formData.append("file", file);
 
-            let extractedText = '';
-            for (let i = 0; i < numPages; i++) {
-                const page = pdfDoc.getPage(i);
-                const text = await page.getTextContent();
-                extractedText += text.items.map(item => item.str).join(' ') + '\n';
+            // Update this URL with your GitHub Actions endpoint
+            const githubActionsEndpoint = 'https://api.github.com/repos/your-username/your-repo/actions/workflows/pdf_to_text.yml/dispatches';
+
+            document.getElementById('status').innerText = "Uploading and converting...";
+
+            try {
+                const response = await fetch(githubActionsEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer YOUR_GITHUB_TOKEN',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify({
+                        ref: 'main',
+                        inputs: {
+                            pdf_path: 'path/to/uploaded.pdf',
+                            txt_path: 'output.txt'
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    document.getElementById('status').innerText = "Conversion started. Please wait...";
+                } else {
+                    throw new Error('Failed to start conversion');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('status').innerText = "An error occurred: " + error.message;
             }
-
-            const blob = new Blob([extractedText], { type: 'text/plain' });
-            const link = document.getElementById('downloadLink');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'output.txt';
-            link.style.display = 'block';
         }
     </script>
 </body>
