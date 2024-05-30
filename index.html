@@ -31,11 +31,34 @@
                 return;
             }
 
-            const githubActionsEndpoint = 'https://api.github.com/repos/aplikaplik/pdf-to-txt/actions/workflows/pdf_to_text.yml/dispatches';
-
             document.getElementById('status').innerText = "Uploading and converting...";
 
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const githubActionsEndpoint = 'https://api.github.com/repos/aplikaplik/pdf-to-txt/actions/workflows/pdf_to_text.yml/dispatches';
+
             try {
+                // Upload the PDF file to GitHub repository
+                const uploadResponse = await fetch(`https://api.github.com/repos/aplikaplik/pdf-to-txt/contents/path/to/uploaded/${file.name}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify({
+                        message: `Add ${file.name}`,
+                        content: btoa(await file.text())
+                    })
+                });
+
+                if (!uploadResponse.ok) {
+                    const errorData = await uploadResponse.json();
+                    throw new Error(`Failed to upload PDF: ${errorData.message}`);
+                }
+
+                // Dispatch the workflow
                 const response = await fetch(githubActionsEndpoint, {
                     method: 'POST',
                     headers: {
@@ -46,7 +69,7 @@
                     body: JSON.stringify({
                         ref: 'main',
                         inputs: {
-                            pdf_path: 'path/to/uploaded.pdf',
+                            pdf_path: `path/to/uploaded/${file.name}`,
                             txt_path: 'output.txt'
                         }
                     })
