@@ -23,4 +23,3 @@ if __name__ == "__main__":
     pdf_path = sys.argv[1]
     txt_path = sys.argv[2]
     pdf_to_text(pdf_path, txt_path)
-
