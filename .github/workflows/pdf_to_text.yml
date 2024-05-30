@@ -37,3 +37,6 @@ jobs:
         name: converted-text
         path: ${{ github.event.inputs.txt_path }}
 
+    - name: Remove uploaded PDF file
+      run: |
+        rm ${{ github.event.inputs.pdf_path }}
