@@ -1,0 +1,32 @@
+name: PDF to Text Conversion
+
+on:
+  workflow_dispatch:
+    inputs:
+      pdf_path:
+        description: 'Path to the PDF file'
+        required: true
+      txt_path:
+        description: 'Path to save the text file'
+        required: true
+
+jobs:
+  convert_pdf:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pdfplumber
+
+    - name: Convert PDF to Text
+      run: |
+        python pdf_to_text.py ${{ github.event.inputs.pdf_path }} ${{ github.event.inputs.txt_path }}
