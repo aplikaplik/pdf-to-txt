@@ -19,6 +19,7 @@ def pdf_to_text(pdf_path, txt_path):
     # Remove the PDF file after conversion if it exists
     if os.path.exists(pdf_path):
         os.remove(pdf_path)
+        print(f"Removed file: {pdf_path}")
     else:
         print(f"Warning: {pdf_path} does not exist.")
 
