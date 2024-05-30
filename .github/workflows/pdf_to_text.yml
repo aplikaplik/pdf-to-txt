@@ -1,5 +1,7 @@
 name: PDF to Text Conversion
 
+name: PDF to Text Conversion
+
 on:
   workflow_dispatch:
     inputs:
