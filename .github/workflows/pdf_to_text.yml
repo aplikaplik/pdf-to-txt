@@ -42,4 +42,4 @@ jobs:
 
     - name: Remove uploaded PDF file
       run: |
-        rm ${{ github.event.inputs.pdf_path }}
+        rm $GITHUB_WORKSPACE/${{ github.event.inputs.pdf_path }}
