@@ -1,0 +1,84 @@
+Obchodní firma nebo jiný název účetní jednotky
+Minimální závazný výčet informací VÝKAZ ZISKU A ZTRÁTY
+podle vyhlášky č.500/2002 Sb. MAKPAK s.r.o.
+v plném rozsahu
+ke dni 31.12.2019
+Sídlo nebo bydliště účetní jednotky
+(v celých tisících Kč) a místo podnikání liší-li se od bydliště
+IC Lidická 2857/42a
+Břeclav 3
+0 3 4 3 7 8 6 8 690 03
+Číslo Skutečnost v účetním období
+Označení Text
+řádku
+běžném minulém
+a b c 1 2
+I. Tržby z prodeje výrobků a služeb 1 5 801 6 848
+II. Tržby za prodej zboží 2 34 229 25 266
+A. Výkonová spotřeba 3 32 180 21 708
+A.1. Náklady vynaložené na prodané zboží 4 29 075 18 959
+A.2. Spotřeba materiálu a energie 5 939 805
+A.3. Služby 6 2 166 1 944
+B. Změna stavu zásob vlastní činnosti (+/-) 7
+C. Aktivace 8
+D. Osobní náklady 9 4 180 3 826
+D.1. Mzdové náklady 10 3 057 2 795
+D.2. Náklady na sociální zabezpečení, zdravotní pojištění a ostatní náklady 11 1 123 1 031
+D.2.1. Náklady na sociální zabezpečení a zdravotní pojištění 12 1 105 1 031
+D.2.2. Ostatní náklady 13 18
+E. Úpravy hodnot v provozní oblasti 14 790 780
+E.1. Úpravy hodnot dlouhodobého nehmotného a hmotného majetku 15 790 780
+E.1.1. Úpravy hodnot dlouhodobého nehmotného a hmotného majetku - trvalé 16 790 780
+E.1.2. Úpravy hodnot dlouhodobého nehmotného a hmotného majetku - dočasné 17
+E.2. Úpravy hodnot zásob 18
+E.3. Úpravy hodnot pohledávek 19
+III. Ostatní provozní výnosy 20 121 40
+III.1. Tržby z prodaného dlouhodobého majetku 21 83
+III.2. Tržby z prodaného materiálu 22
+III.3. Jiné provozní výnosy 23 38 40
+F. Ostatní provozní náklady 24 530 680
+F.1. Zůstatková cena prodaného dlouhodobého majetku 25
+F.2. Zůstatková cena prodaného materiálu 26
+F.3. Daně a poplatky 27 83 54
+F.4. Rezervy v provozní oblasti a komplexní náklady příštích období 28
+F.5. Jiné provozní náklady 29 447 626
+* Provozní výsledek hospodaření (+/-) 30 2 471 5 160
+IV. Výnosy z dlouhodobého finančního majetku - podíly 31
+IV.1. Výnosy z podílů - ovládaná nebo ovládající osoba 32
+IV.2. Ostatní výnosy z podílů 33
+G. Náklady vynaložené na prodané podíly 34
+V. Výnosy z ostatního dlouhodobého finančního majetku 35
+V.1. Výnosy z ostatního dlouhodobého finančního majetku - ovládaná nebo ovládající osoba 36
+V.2. Ostatní výnosy z ostatního dlouhodobého finančního majetku 37
+H. Náklady související s ostatním dlouhodobým finančním majetkem 38
+VI. Výnosové úroky a podobné výnosy 39
+VI.1. Výnosové úroky a podobné výnosy - ovládaná nebo ovládající osoba 40
+VI.2. Ostatní výnosové úroky a podobné výnosy 41
+I. Úpravy hodnot a rezervy ve finanční oblasti 42
+J. Nákladové úroky a podobné náklady 43 187 165
+Číslo Skutečnost v účetním období
+Označení Text
+řádku
+běžném minulém
+a b c 1 2
+J.1. Nákladové úroky a podobné náklady - ovládaná nebo ovládající osoba 44 187 165
+J.2. Ostatní nákladové úroky a podobné náklady 45
+VII. Ostatní finanční výnosy 46 132 115
+K. Ostatní finanční náklady 47 308 203
+* Finanční výsledek hospodaření (+/-) 48 -363 -253
+** Výsledek hospodaření před zdaněním (+/-) 49 2 108 4 907
+L. Daň z příjmů 50 945
+L.1. Daň z příjmů splatná 51 945
+L.2. Daň z příjmů odložená 52
+** Výsledek hospodaření po zdanění (+/-) 53 2 108 3 962
+M. Převod podílu na výsledku hospodaření společníkům (+/-) 54
+*** Výsledek hospodaření za účetní období (+/-) 55 2 108 3 962
+* Čistý obrat za účetní období 56 40 283 32 269
+Kontrolní číslo (součet řádků 01 až 56) 99 167 074 140 538
+Pozn.:
+Sestaveno dne: Podpisový záznam statutárního orgánu účetní jednotky nebo podpisový
+záznam fyzické osoby, která je účetní jednotkou
+13.04.2020
+Právní forma účetní jednotky Předmět podnikání
+Společnost s ručením omezeným Zprostředkování velkoobchodu a velkoobchod v zast.
+#UC110682-66, program firmy © MRP - Informatics, s.r.o., P.O.BOX 35, 763 15 Slušovice
