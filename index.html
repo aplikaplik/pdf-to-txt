@@ -33,23 +33,21 @@
 
             document.getElementById('status').innerText = "Uploading and converting...";
 
-            const formData = new FormData();
-            formData.append("file", file);
+            const reader = new FileReader();
+            reader.onload = async function() {
+                const fileContent = reader.result.split(',')[1]; // Get base64 content
 
-            const githubActionsEndpoint = 'https://api.github.com/repos/aplikaplik/pdf-to-txt/actions/workflows/pdf_to_text.yml/dispatches';
-
-            try {
-                // Upload the PDF file to GitHub repository
-                const uploadResponse = await fetch(`https://api.github.com/repos/aplikaplik/pdf-to-txt/contents/path/to/uploaded/${file.name}`, {
+                const githubFilePath = `path/to/uploaded/${file.name}`;
+                const uploadResponse = await fetch(`https://api.github.com/repos/aplikaplik/pdf-to-txt/contents/${githubFilePath}`, {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/vnd.github.v3+json'
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         message: `Add ${file.name}`,
-                        content: btoa(await file.text())
+                        content: fileContent
                     })
                 });
 
@@ -58,7 +56,7 @@
                     throw new Error(`Failed to upload PDF: ${errorData.message}`);
                 }
 
-                // Dispatch the workflow
+                const githubActionsEndpoint = 'https://api.github.com/repos/aplikaplik/pdf-to-txt/actions/workflows/pdf_to_text.yml/dispatches';
                 const response = await fetch(githubActionsEndpoint, {
                     method: 'POST',
                     headers: {
@@ -69,7 +67,7 @@
                     body: JSON.stringify({
                         ref: 'main',
                         inputs: {
-                            pdf_path: `path/to/uploaded/${file.name}`,
+                            pdf_path: githubFilePath,
                             txt_path: 'output.txt'
                         }
                     })
@@ -81,10 +79,9 @@
                     const errorData = await response.json();
                     throw new Error(`Failed to start conversion: ${errorData.message}`);
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('status').innerText = "An error occurred: " + error.message;
-            }
+            };
+
+            reader.readAsDataURL(file);
         }
     </script>
 </body>
