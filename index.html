@@ -23,8 +23,8 @@
             const formData = new FormData();
             formData.append("file", file);
 
-            // Update this URL with your GitHub Actions endpoint
-            const githubActionsEndpoint = 'https://api.github.com/repos/your-username/your-repo/actions/workflows/pdf_to_text.yml/dispatches';
+            const githubActionsEndpoint = 'https://api.github.com/repos/aplikaplik/pdf-to-text/actions/workflows/pdf_to_text.yml/dispatches';
+            const token = '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'; // Replace with your new token
 
             document.getElementById('status').innerText = "Uploading and converting...";
 
@@ -32,13 +32,13 @@
                 const response = await fetch(githubActionsEndpoint, {
                     method: 'POST',
                     headers: {
-                        'Authorization': 'Bearer YOUR_GITHUB_TOKEN',
+                        'Authorization': `Bearer ${token}`,
                         'Accept': 'application/vnd.github.v3+json'
                     },
                     body: JSON.stringify({
                         ref: 'main',
                         inputs: {
-                            pdf_path: 'path/to/uploaded.pdf',
+                            pdf_path: file.name,
                             txt_path: 'output.txt'
                         }
                     })
@@ -47,7 +47,8 @@
                 if (response.ok) {
                     document.getElementById('status').innerText = "Conversion started. Please wait...";
                 } else {
-                    throw new Error('Failed to start conversion');
+                    const errorData = await response.json();
+                    throw new Error(`Failed to start conversion: ${errorData.message}`);
                 }
             } catch (error) {
                 console.error('Error:', error);
