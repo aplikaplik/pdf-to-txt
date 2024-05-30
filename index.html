@@ -78,24 +78,14 @@
 
                     // Check for completion and fetch the artifact
                     setTimeout(async () => {
-                        const artifactsResponse = await fetch('https://api.github.com/repos/aplikaplik/pdf-to-txt/actions/artifacts', {
+                        const downloadUrl = `https://raw.githubusercontent.com/aplikaplik/pdf-to-txt/main/path/to/output/${file.name}.txt`;
+                        const downloadResponse = await fetch(downloadUrl, {
                             headers: {
-                                'Authorization': `Bearer ${token}`,
-                                'Accept': 'application/vnd.github.v3+json'
+                                'Authorization': `Bearer ${token}`
                             }
                         });
 
-                        const artifactsData = await artifactsResponse.json();
-                        const artifact = artifactsData.artifacts.find(a => a.name === 'converted-text');
-
-                        if (artifact) {
-                            const downloadResponse = await fetch(artifact.archive_download_url, {
-                                headers: {
-                                    'Authorization': `Bearer ${token}`,
-                                    'Accept': 'application/vnd.github.v3+json'
-                                }
-                            });
-
+                        if (downloadResponse.ok) {
                             const blob = await downloadResponse.blob();
                             const url = window.URL.createObjectURL(blob);
 
