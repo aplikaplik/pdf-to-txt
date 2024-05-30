@@ -34,11 +34,12 @@ jobs:
       run: |
         python pdf_to_text.py ${{ github.event.inputs.pdf_path }} ${{ github.event.inputs.txt_path }}
 
-    - name: Upload text file
-      uses: actions/upload-artifact@v4
-      with:
-        name: converted-text
-        path: ${{ github.event.inputs.txt_path }}
+    - name: Commit text file
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+        git add ${{ github.event.inputs.txt_path }}
+        git commit -m "Add converted text file"
 
     - name: Remove uploaded PDF file
       run: |
