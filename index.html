@@ -76,27 +76,19 @@
                 if (response.ok) {
                     document.getElementById('status').innerText = "Conversion started. Please wait...";
 
-                    // Check for completion and fetch the artifact
+                    // Check for completion and fetch the converted file
                     setTimeout(async () => {
-                        const artifactsResponse = await fetch('https://api.github.com/repos/aplikaplik/pdf-to-txt/actions/artifacts', {
+                        const txtFilePath = `path/to/output/${file.name}.txt`;
+                        const fileResponse = await fetch(`https://api.github.com/repos/aplikaplik/pdf-to-txt/contents/${txtFilePath}`, {
                             headers: {
                                 'Authorization': `Bearer ${token}`,
-                                'Accept': 'application/vnd.github.v3+json'
+                                'Accept': 'application/vnd.github.v3.raw'
                             }
                         });
 
-                        const artifactsData = await artifactsResponse.json();
-                        const artifact = artifactsData.artifacts.find(a => a.name === 'converted-text');
-
-                        if (artifact) {
-                            const downloadResponse = await fetch(artifact.archive_download_url, {
-                                headers: {
-                                    'Authorization': `Bearer ${token}`,
-                                    'Accept': 'application/vnd.github.v3+json'
-                                }
-                            });
-
-                            const blob = await downloadResponse.blob();
+                        if (fileResponse.ok) {
+                            const textContent = await fileResponse.text();
+                            const blob = new Blob([textContent], { type: 'text/plain' });
                             const url = window.URL.createObjectURL(blob);
 
                             const downloadLink = document.getElementById('downloadLink');
@@ -107,7 +99,7 @@
                         } else {
                             document.getElementById('status').innerText = "Failed to retrieve the converted file.";
                         }
-                    }, 10000); // Wait 10 seconds before checking for completion
+                    }, 20000); // Wait 20 seconds before checking for completion
                 } else {
                     const errorData = await response.json();
                     throw new Error(`Failed to start conversion: ${errorData.message}`);
