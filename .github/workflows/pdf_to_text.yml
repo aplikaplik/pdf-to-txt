@@ -1,56 +1,52 @@
-name: PDF to Text Conversion
+name: convert_pdf
 
 on:
-  workflow_dispatch:
-    inputs:
-      pdf_path:
-        description: 'Path to the PDF file'
-        required: true
-      txt_path:
-        description: 'Path to save the text file'
-        required: true
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  convert_pdf:
+  build:
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Set up Python
+    - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.8'
 
-    - name: Install dependencies
+    - name: Install pdfplumber
       run: |
         python -m pip install --upgrade pip
         pip install pdfplumber
 
-    - name: Create output directory
-      run: mkdir -p $(dirname ${{ github.event.inputs.txt_path }})
-
-    - name: Convert PDF to Text
+    - name: Find PDF file
+      id: find_pdf
       run: |
-        python pdf_to_text.py ${{ github.event.inputs.pdf_path }} ${{ github.event.inputs.txt_path }}
-      env:
-        GITHUB_WORKSPACE: ${{ github.workspace }}
+        pdf_file=$(find path/to/uploaded -name "*.pdf" | head -n 1)
+        echo "PDF_FILE=$pdf_file" >> $GITHUB_ENV
 
-    - name: Commit text file
+    - name: Create output directory
+      run: mkdir -p path/to/output
+
+    - name: Convert PDF to text
+      run: |
+        pdf_file=$(echo ${{ env.PDF_FILE }})
+        base_name=$(basename "$pdf_file" .pdf)
+        python pdf_to_text.py "$pdf_file" "path/to/output/$base_name.txt"
+
+    - name: Commit and push converted text file
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
-        git add ${{ github.event.inputs.txt_path }}
+        git add path/to/output/*.txt
         git commit -m "Add converted text file"
         git push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Remove uploaded PDF file
-      run: |
-        if [ -f $GITHUB_WORKSPACE/${{ github.event.inputs.pdf_path }} ]; then 
-          rm $GITHUB_WORKSPACE/${{ github.event.inputs.pdf_path }}; 
-        else 
-          echo "File does not exist: $GITHUB_WORKSPACE/${{ github.event.inputs.pdf_path }}"; 
-        fi
-      continue-on-error: true
