@@ -31,6 +31,7 @@ jobs:
       run: |
         pdf_file=$(find path/to/uploaded -name "*.pdf" | head -n 1)
         echo "PDF_FILE=$pdf_file" >> $GITHUB_ENV
+        echo "BASE_NAME=$(basename "$pdf_file" .pdf)" >> $GITHUB_ENV
 
     - name: Create output directory
       run: mkdir -p path/to/output
@@ -38,7 +39,7 @@ jobs:
     - name: Convert PDF to text
       run: |
         pdf_file=$(echo ${{ env.PDF_FILE }})
-        base_name=$(basename "$pdf_file" .pdf)
+        base_name=$(echo ${{ env.BASE_NAME }})
         python pdf_to_text.py "$pdf_file" "path/to/output/$base_name.txt"
 
     - name: Commit and push converted text file
@@ -50,3 +51,10 @@ jobs:
         git push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload converted text file for download
+      uses: actions/upload-artifact@v3
+      with:
+        name: converted-text
+        path: path/to/output/*.txt
+
