@@ -17,11 +17,14 @@ def pdf_to_text(pdf_path, txt_path):
         f.write(text)
 
     # Remove the PDF file after conversion if it exists
-    if os.path.exists(pdf_path):
-        os.remove(pdf_path)
-        print(f"Removed file: {pdf_path}")
-    else:
-        print(f"Warning: {pdf_path} does not exist.")
+    try:
+        if os.path.exists(pdf_path):
+            os.remove(pdf_path)
+            print(f"Removed file: {pdf_path}")
+        else:
+            print(f"Warning: {pdf_path} does not exist.")
+    except Exception as e:
+        print(f"Error removing file: {e}")
 
 if __name__ == "__main__":
     pdf_path = sys.argv[1]
