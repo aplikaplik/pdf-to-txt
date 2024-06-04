@@ -1,113 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>PDF to Text Converter</title>
-</head>
-<body>
-    <h1>Upload PDF to Convert to Text</h1>
-    <label for="githubToken">Enter your GitHub Token:</label>
-    <input type="text" id="githubToken" placeholder="Your GitHub Token">
-    <br><br>
-    <input type="file" id="fileInput" accept="application/pdf">
-    <br><br>
-    <button onclick="uploadAndConvert()">Convert</button>
-    <p id="status"></p>
-    <a id="downloadLink" style="display:none;">Download Text</a>
+name: PDF to Text Conversion
 
-    <script>
-        async function uploadAndConvert() {
-            const tokenInput = document.getElementById('githubToken');
-            const token = tokenInput.value.trim();
-            if (!token) {
-                alert("Please enter your GitHub token.");
-                return;
-            }
+on:
+  workflow_dispatch:
+    inputs:
+      pdf_path:
+        description: 'Path to the PDF file'
+        required: true
+      txt_path:
+        description: 'Path to save the text file'
+        required: true
 
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-            if (!file) {
-                alert("Please upload a PDF file.");
-                return;
-            }
+jobs:
+  convert_pdf:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-            document.getElementById('status').innerText = "Uploading and converting...";
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
 
-            const reader = new FileReader();
-            reader.onload = async function() {
-                const fileContent = reader.result.split(',')[1]; // Get base64 content
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pdfplumber
 
-                const githubFilePath = `path/to/uploaded/${file.name}`;
-                const uploadResponse = await fetch(`https://api.github.com/repos/aplikaplik/pdf-to-txt/contents/${githubFilePath}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: `Add ${file.name}`,
-                        content: fileContent
-                    })
-                });
+    - name: Remove existing files in path/to
+      run: |
+        if [ -d $GITHUB_WORKSPACE/path/to ]; then
+          echo "Removing existing files in path/to"
+          rm -rf $GITHUB_WORKSPACE/path/to
+        else
+          echo "Directory path/to does not exist"
+        fi
 
-                if (!uploadResponse.ok) {
-                    const errorData = await uploadResponse.json();
-                    throw new Error(`Failed to upload PDF: ${errorData.message}`);
-                }
+    - name: Create output directory
+      run: mkdir -p $(dirname ${{ github.event.inputs.txt_path }})
 
-                const githubActionsEndpoint = 'https://api.github.com/repos/aplikaplik/pdf-to-txt/actions/workflows/pdf_to_text.yml/dispatches';
-                const response = await fetch(githubActionsEndpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        ref: 'main',
-                        inputs: {
-                            pdf_path: githubFilePath,
-                            txt_path: `path/to/output/${file.name}.txt`
-                        }
-                    })
-                });
+    - name: Convert PDF to Text
+      run: |
+        python pdf_to_text.py ${{ github.event.inputs.pdf_path }} ${{ github.event.inputs.txt_path }}
+      env:
+        GITHUB_WORKSPACE: ${{ github.workspace }}
 
-                if (response.ok) {
-                    document.getElementById('status').innerText = "Conversion started. Please wait...";
-
-                    // Check for completion and fetch the converted file
-                    setTimeout(async () => {
-                        const txtFilePath = `path/to/output/${file.name}.txt`;
-                        const fileResponse = await fetch(`https://api.github.com/repos/aplikaplik/pdf-to-txt/contents/${txtFilePath}`, {
-                            headers: {
-                                'Authorization': `Bearer ${token}`,
-                                'Accept': 'application/vnd.github.v3.raw'
-                            }
-                        });
-
-                        if (fileResponse.ok) {
-                            const textContent = await fileResponse.text();
-                            const blob = new Blob([textContent], { type: 'text/plain' });
-                            const url = window.URL.createObjectURL(blob);
-
-                            const downloadLink = document.getElementById('downloadLink');
-                            downloadLink.href = url;
-                            downloadLink.download = `${file.name}.txt`;
-                            downloadLink.style.display = 'block';
-                            document.getElementById('status').innerText = "Conversion completed!";
-                        } else {
-                            document.getElementById('status').innerText = "Failed to retrieve the converted file.";
-                        }
-                    }, 20000); // Wait 20 seconds before checking for completion
-                } else {
-                    const errorData = await response.json();
-                    throw new Error(`Failed to start conversion: ${errorData.message}`);
-                }
-            };
-
-            reader.readAsDataURL(file);
-        }
-    </script>
-</body>
-</html>
+    - name: Commit text file
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+        git add ${{ github.event.inputs.txt_path }}
+        git commit -m "Add converted text file"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
