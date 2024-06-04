@@ -8,7 +8,12 @@
 <body>
     <h1>PDF to Text Converter</h1>
     <form action="upload.php" method="post" enctype="multipart/form-data">
-        <input type="file" name="fileToUpload" id="fileToUpload">
+        <label for="fileToUpload">Select PDF file:</label>
+        <input type="file" name="fileToUpload" id="fileToUpload" required>
+        <br><br>
+        <label for="githubToken">Enter GitHub Token:</label>
+        <input type="text" name="githubToken" id="githubToken" required>
+        <br><br>
         <input type="submit" value="Upload PDF" name="submit">
     </form>
 
