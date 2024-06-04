@@ -2,25 +2,120 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF to Text Converter</title>
 </head>
 <body>
-    <h1>PDF to Text Converter</h1>
-    <form action="upload.php" method="post" enctype="multipart/form-data">
-        <label for="fileToUpload">Select PDF file:</label>
-        <input type="file" name="fileToUpload" id="fileToUpload" required>
-        <br><br>
-        <label for="githubToken">Enter GitHub Token:</label>
-        <input type="text" name="githubToken" id="githubToken" required>
-        <br><br>
-        <input type="submit" value="Upload PDF" name="submit">
-    </form>
+    <h1>Upload PDF to Convert to Text</h1>
+    <label for="githubToken">Enter your GitHub Token:</label>
+    <input type="text" id="githubToken" placeholder="Your GitHub Token">
+    <br><br>
+    <input type="file" id="fileInput" accept="application/pdf">
+    <br><br>
+    <button onclick="uploadAndConvert()">Convert</button>
+    <p id="status"></p>
+    <a id="downloadLink" style="display:none;">Download Text</a>
 
-    <?php
-    if (isset($_GET['converted_file'])) {
-        echo '<a href="' . $_GET['converted_file'] . '" download>Download converted text file</a>';
-    }
-    ?>
+    <script>
+        async function uploadAndConvert() {
+            const tokenInput = document.getElementById('githubToken');
+            const token = tokenInput.value.trim();
+            if (!token) {
+                alert("Please enter your GitHub token.");
+                return;
+            }
+
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert("Please upload a PDF file.");
+                return;
+            }
+
+            document.getElementById('status').innerText = "Uploading and converting...";
+
+            const reader = new FileReader();
+            reader.onload = async function() {
+                const fileContent = reader.result.split(',')[1]; // Get base64 content
+
+                const githubFilePath = `path/to/uploaded/${file.name}`;
+                const uploadResponse = await fetch(`https://api.github.com/repos/aplikaplik/pdf-to-txt/contents/${githubFilePath}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Add ${file.name}`,
+                        content: fileContent
+                    })
+                });
+
+                if (!uploadResponse.ok) {
+                    const errorData = await uploadResponse.json();
+                    throw new Error(`Failed to upload PDF: ${errorData.message}`);
+                }
+
+                const githubActionsEndpoint = 'https://api.github.com/repos/aplikaplik/pdf-to-txt/actions/workflows/pdf_to_text.yml/dispatches';
+                const response = await fetch(githubActionsEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ref: 'main',
+                        inputs: {
+                            pdf_path: githubFilePath,
+                            txt_path: `path/to/output/${file.name}.txt`
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    document.getElementById('status').innerText = "Conversion started. Please wait...";
+
+                    // Check for completion and fetch the artifact
+                    setTimeout(async () => {
+                        const artifactsResponse = await fetch('https://api.github.com/repos/aplikaplik/pdf-to-txt/actions/artifacts', {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/vnd.github.v3+json'
+                            }
+                        });
+
+                        const artifactsData = await artifactsResponse.json();
+                        const artifact = artifactsData.artifacts.find(a => a.name === 'converted-text');
+
+                        if (artifact) {
+                            const downloadResponse = await fetch(artifact.archive_download_url, {
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Accept': 'application/vnd.github.v3+json'
+                                }
+                            });
+
+                            const blob = await downloadResponse.blob();
+                            const url = window.URL.createObjectURL(blob);
+
+                            const downloadLink = document.getElementById('downloadLink');
+                            downloadLink.href = url;
+                            downloadLink.download = `${file.name}.txt`;
+                            downloadLink.style.display = 'block';
+                            document.getElementById('status').innerText = "Conversion completed!";
+                        } else {
+                            document.getElementById('status').innerText = "Failed to retrieve the converted file.";
+                        }
+                    }, 10000); // Wait 10 seconds before checking for completion
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(`Failed to start conversion: ${errorData.message}`);
+                }
+            };
+
+            reader.readAsDataURL(file);
+        }
+    </script>
 </body>
 </html>
