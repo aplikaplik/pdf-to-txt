@@ -4,6 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
     $uploadOk = 1;
     $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+    $githubToken = $_POST['githubToken'];
 
     // Check if file is a actual PDF
     if($fileType != "pdf") {
@@ -17,6 +18,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $output_file = "path/to/output/" . basename($target_file, ".pdf") . ".txt";
             shell_exec("python pdf_to_text.py $target_file $output_file");
 
+            // Configure git
+            shell_exec("git config --global user.name 'github-actions'");
+            shell_exec("git config --global user.email 'github-actions@github.com'");
+
+            // Add and commit the converted file
+            shell_exec("git add $output_file");
+            shell_exec("git commit -m 'Add converted text file'");
+            shell_exec("git push https://$githubToken:x-oauth-basic@github.com/aplikaplik/pdf-to-txt.git main");
+
             // Redirect to the main page with the link to the converted file
             header("Location: index.html?converted_file=" . $output_file);
         } else {
@@ -25,3 +35,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+
