@@ -47,7 +47,8 @@ podstatný vliv
 6. Pořizovaný dlouhodobý finanční majetek 29
 7. Poskytnuté zálohy na dlouhodobý finanční majetek 30
 C. Oběžná aktiva 31 5 538 5 538 367
-C. I. Zásoby 32Číslo Číslo Běžné účetní období Minulé úč. obdob
+C. I. Zásoby 32
+Číslo Číslo Běžné účetní období Minulé úč. obdob
 Aktiva
 položky řádku
 Brutto Korekce Netto Netto
@@ -86,7 +87,8 @@ D. I. Časové rozlišení 63 42 42 17
 D. I. 1. Náklady příštích období 64 42 42 17
 2. Komplexní náklady příštích období 65
 3. Příjmy příštích období 66
-Kontrolní číslo (ř. 01 až 66) 998 25 344 -784 24 560 3 303Číslo Číslo Stav v běžném Stav v minulém
+Kontrolní číslo (ř. 01 až 66) 998 25 344 -784 24 560 3 303
+Číslo Číslo Stav v běžném Stav v minulém
 Pasiva
 položky řádku účetním období účetním období
 a b c 5 6
@@ -171,7 +173,8 @@ B. II. 1. Z á v a zky z obchodních vztahů
 B. III. K r á t kodobé závazky 2 705 477
 106
 B. III.1. Z á v a zky z obchodních vztahů 396 107
-107Číslo Číslo Stav v běžném Stav v minulém
+107
+Číslo Číslo Stav v běžném Stav v minulém
 Pasiva
 položky řádku účetním období účetním období
 a b c 5 6
